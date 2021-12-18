@@ -86,7 +86,7 @@
     }
 
     function redirectTo(XMLHttpRequest, textStatus, errorThrown){
-        if (XMLHttpRequest.status == 401){
+        if (XMLHttpRequest.status == 403){
             // 没必要用 window.location.replace，因为用户可能还希望回到原来的页面。
             window.location.href = "/unauthorized.html";
         }

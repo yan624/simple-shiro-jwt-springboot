@@ -73,6 +73,9 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
                 return false;
             }
 
+            // see https://www.techtarget.com/searchsecurity/definition/challenge-response-system
+            // see https://blog.csdn.net/maoliran/article/details/51841420
+            // 似乎是远古时期的“质询-回复”机制，不用它。
 //            sendChallenge(request, response); // shiro's code, don't use it.
             redirectToLogin(request, response);
         }

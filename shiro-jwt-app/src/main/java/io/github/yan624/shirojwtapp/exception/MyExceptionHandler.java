@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class MyExceptionHandler {
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    // 这里，HttpStatus.UNAUTHORIZED 应该是未认证的意思，HttpStatus.FORBIDDEN 应该才是未授权的意思。
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthorizationException.class)
     public void handleUnAuthorization(HttpServletResponse httpServletResponse){
         // 由于前后端分离，对于后端来说没有页面的概念，我们直接返回状态码即可。让前端自己控制页面跳转。

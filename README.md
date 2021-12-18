@@ -1,5 +1,12 @@
 ## todo
 - [ ] 根据 [JWT 文档](https://datatracker.ietf.org/doc/html/rfc7519) 严格执行判断无效令牌的逻辑
+- [ ] 完善 jwt 令牌签发功能
+- [ ] sso 受众注册
+- [ ] 完善授权功能
+
+## 词汇表
+1. sso：指 shiro-jwt-sso 系统，也指单点登录。
+2. app：指 shiro-jwt-app。
 
 ## 特性
 1. 使用 [shiro](https://shiro.apache.org/) 作为认证框架。
@@ -15,29 +22,29 @@
 4. [jwt](https://jwt.io/) 基本概念
 5. 了解什么是跨域
 
+## 如何使用
+1. 启动 shiro-jwt-sso (8080) 和 shiro-jwt-app (8081)，目前无先后顺序之分。
+2. 访问 http://localhost:8081/index.html
+
+## 预期结果
+1. 访问 http://localhost:8081/index.html
+2. 由于上述链接请求了用户信息，因此访问被拒绝并跳转到 http://localhost:8080/login.html?loginUrl=http://localhost:8081/login.html&backUrl=http://localhost:8081/index.html&aud=shiro-jwt-app  
+   ![单点登录系统](img/单点登录系统.png)
+3. 输入用户名密码后，直接重定向回 http://localhost:8081/index.html  
+   ![用户信息系统](img/用户信息系统.png)
+4. 点击 girlInfo 按钮，跳转到未授权页面。
+5. 过几分钟后，jwt 失效。按 F5 刷新，又被重定向到 sso。
+
 ## 用户请求时序图
 
 ### 用户未登录执行单点登录
 ![用户未登录执行单点登录时序图](img/用户未登录执行单点登录时序图.png)
 
 ### JWTFilter
-代办
+待办
 
 ### 用户已登录app意外重启
 ![用户已登录app意外重启时序图](img/用户已登录app意外重启时序图.png)
-
-## 如何使用
-1. 启动 shiro-jwt-sso (8080) 和 shiro-jwt-app (8081)，目前无先后顺序之分。
-2. 访问 http://localhost:8081/index.html
-
-## 预期结果
-1. 访问 http://localhost:8081/index.html 
-2. 由于上述链接请求了用户信息，因此访问被拒绝并跳转到 http://localhost:8080/login.html?loginUrl=http://localhost:8081/login.html&backUrl=http://localhost:8081/index.html&aud=shiro-jwt-app  
-![单点登录系统](img/单点登录系统.png)
-3. 输入用户名密码后，直接重定向回 http://localhost:8081/index.html  
-![用户信息系统](img/用户信息系统.png)
-4. 点击 girlInfo 按钮，跳转到未授权页面。
-5. 过几分钟后，jwt 失效。按 F5 刷新，又被重定向到 sso。
 
 ## 程序代码示例
 该项目可能会更新。以下代码仅用于参考，并非真实代码，直接使用甚至会报错。
@@ -259,9 +266,9 @@ boyfriend = ask:*
 ```
 
 ## 问答
-**sso 没有授权功能吗？**sso 是单点登录系统，目前的想法是 sso 只做登录，授权交给 app 实现。
+**sso 没有授权功能吗？** sso 是单点登录系统，目前的想法是 sso 只做登录，授权交给 app 实现。
 
-**为什么 app 也没有授权功能？？**因为采用了 InI 配置。InIRealm 会根据用户名（`principal`）获取用户的权限。
+**为什么 app 也没有授权功能？？** 因为采用了 InI 配置。InIRealm 会根据用户名（`principal`）获取用户的权限。
 但是本系统中，`principal` 和 `credentials` 都是 jwt，用户名藏在 jwt 里。虽然可以写一些简单的代码实现上述功能，但是太懒了-_-!
 
 ## 排坑指南
