@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息系统</title>
+</head>
+<body>
+<h1>用户信息系统</h1>
+
+<p id="username"></p>  <a href="logout" >登出（logout）</a>
+<br />
+<br />
+
+<button onclick="getUserInfoJson()">userInfoJson</button> <span style="width: 20px"></span>
+<button onclick="getGirlInfo()">girlInfo</button>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script>
+    $(function(){
+        // console.log(localStorage.getItem("Authorization"))
+        $.ajax({
+            type: "GET",
+            url: "/user/userInfoJson",
+            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            complete: _complete,
+            success: function(data) {
+                console.log(data.username)
+                $("#username").text(data.username + "，欢迎您！");
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                //查看错误信息
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+            }
+        });
+    });
+
+    function getUserInfoJson(){
+        $.ajax({
+            type: "GET",
+            url: "/user/userInfoJson",
+            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            complete: _complete,
+            success: function(result) {
+                console.log(JSON.stringify(result))
+                alert(JSON.stringify(result))
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                //查看错误信息
+                // alert(XMLHttpRequest.status);
+                // alert(XMLHttpRequest.readyState);
+                // alert(textStatus);
+            }
+        });
+    }
+
+    function getGirlInfo(){
+        $.ajax({
+            type: "GET",
+            url: "/user/girlInfo",
+            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            complete: _complete,
+            success: function(result) {
+                console.log(result)
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                //查看错误信息
+                console.log(XMLHttpRequest.status);
+                console.log(XMLHttpRequest.readyState);
+                console.log(textStatus);
+
+                redirectTo(XMLHttpRequest, textStatus, errorThrown)
+            }
+        });
+    }
+
+    function _complete(xhr, status){
+        var location = xhr.getResponseHeader("redirect");
+        if (location != "" && location != null) {
+            // alert(location)
+            //重新跳转到 login.html
+            window.location.replace(location);
+        }
+    }
+
+    function redirectTo(XMLHttpRequest, textStatus, errorThrown){
+        if (XMLHttpRequest.status == 401){
+            // 没必要用 window.location.replace，因为用户可能还希望回到原来的页面。
+            window.location.href = "/unauthorized.html";
+        }
+    }
+</script>
+</html>

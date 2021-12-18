@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+shiro:
+  # loginUrl 不要写成 'localhost:8080/login.html'，试了好长时间跳转不过去！
+  loginUrl: 'http://localhost:8080/login.html'
+
+#logging:
+#  level:
+#    root: DEBUG
