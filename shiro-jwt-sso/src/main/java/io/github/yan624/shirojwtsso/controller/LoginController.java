@@ -43,16 +43,18 @@ public class LoginController {
 
         // 2. 签发 jwt | sign jwt
         final Object principal = subject.getPrincipal();
-        String username;
+        String sub;
         if (principal instanceof String){
-            username = (String) principal;
+            sub = (String) principal;
         }else{
+            // JWT 的 subject 定义类似于 shiro 的 principal，你应该将用户的唯一标识存储到 sub 声明中。
+            // 本系统使用 ini 配置，所以信息不是很多，只有用户名和密码。目前将账号作为 sub。
             // 这里可以对 principal 进行强转，然后取出用户名和账号，甚至是更多信息。
-            // principal 是认证过程中存储的，应该是从数据库中查询出的数据。
-            // 本系统使用的是 ini 配置，所以信息不是很多。只有用户名和密码，连手机号都没。所以下面编了一个手机号。
-            username = "default name";
+            // principal 是在认证过程中存储的，应该是从数据库中查询出的数据。
+            sub = "jwt subject";
         }
-        final String jwt = JwtUtil.sign(username, "17712345678", aud);
+        // 用户名指的是用户的本名或昵称，不应该作为账号名（有些系统可能是账号名）
+        final String jwt = JwtUtil.sign("zhangsan", sub, aud);
 
         // 3. 重定向回用户访问的链接 | redirect to the link the user access
         // todo: 处理 url 参数？直接拼接可能会引起异常？

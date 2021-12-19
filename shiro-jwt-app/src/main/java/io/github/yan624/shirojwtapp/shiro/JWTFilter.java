@@ -6,6 +6,7 @@ import io.github.yan624.shirojwtapp.util.JwtUtil;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.BearerToken;
+import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -44,6 +45,7 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
         // 考虑到 jwt 过期与用户未认证二者的逻辑是一样的，所以过期以及解码失败都返回 false，不允许访问
         try {
             if (JwtUtil.isExpire(jwt)) {
+//                throw new ExpiredCredentialsException();
                 return false;
             }
         }catch (JWTDecodeException e){
@@ -59,6 +61,7 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
             loggedIn = executeLogin(request, response);
         }
         if (!loggedIn) {
+            // todo:
             // 需不需要在这把用户本地的 token 删除？
             // 这里会跳转到登录页面，等用户登录后，虽然本系统会覆盖原来的 token，但是感觉逻辑不对。应该在登出之后，立即清除本地 token。
             // 目前我暂时想不到办法能够清除它。

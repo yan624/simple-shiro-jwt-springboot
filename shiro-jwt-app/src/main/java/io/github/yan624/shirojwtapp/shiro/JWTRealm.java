@@ -1,5 +1,6 @@
 package io.github.yan624.shirojwtapp.shiro;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
@@ -25,18 +26,21 @@ public class JWTRealm extends AuthenticatingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         final BearerToken bearerToken = (BearerToken) token;
         final String jwt = bearerToken.getToken();
-        boolean verified = false;
+        DecodedJWT verifiedJWT = null;
         try {
-            verified = JwtUtil.verify(jwt);
+            verifiedJWT = JwtUtil.verify(jwt);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (TokenExpiredException teex){
+            teex.printStackTrace();
+            // throw shiro's exception
+            throw new ExpiredCredentialsException();
         }
-        final DecodedJWT decodedJWT = JwtUtil.decode(jwt);
-        final Claim claim = decodedJWT.getClaim("username");
-        if (verified) {
+        if (verifiedJWT != null) {
+            final String sub = verifiedJWT.getSubject();
             return new SimpleAccount(jwt, token.getCredentials(), getName());
         }else{
-            return new SimpleAccount(jwt, "", getName());
+            throw new AuthenticationException("This JWT cannot be verified.");
         }
     }
 }

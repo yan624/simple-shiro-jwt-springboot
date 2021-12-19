@@ -7,7 +7,9 @@
 <body>
 <h1>用户信息系统</h1>
 
-<p id="username"></p>  <a href="logout" >登出（logout）</a>
+<p id="username"></p>
+<p>注意，jwt 将在几分钟后过期，到时你将无法访问该页面。可以在 shiro-jwt-sso 配置过期时间。</p>
+<a href="logout" >登出（logout）</a>
 <br />
 <br />
 
@@ -44,7 +46,7 @@
             headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
             complete: _complete,
             success: function(result) {
-                console.log(JSON.stringify(result))
+                console.log(result)
                 alert(JSON.stringify(result))
             },
             error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -64,6 +66,7 @@
             complete: _complete,
             success: function(result) {
                 console.log(result)
+                alert(JSON.stringify(result))
             },
             error: function(XMLHttpRequest, textStatus, errorThrown){
                 //查看错误信息

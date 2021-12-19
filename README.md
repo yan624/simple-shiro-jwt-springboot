@@ -1,10 +1,13 @@
 待补充文档……
 
 ## todo
-- [ ] 根据 [JWT 文档](https://datatracker.ietf.org/doc/html/rfc7519) 严格执行判断无效令牌的逻辑
-- [ ] 完善 jwt 令牌签发功能
-- [ ] sso 受众注册
-- [ ] 完善授权功能
+- [ ] shiro-jwt-sso 禁用 session
+- [ ] shiro-jwt-app 也做成无状态服务器？
+- [x] 根据 [JWT 文档](https://datatracker.ietf.org/doc/html/rfc7519) 严格执行判断无效令牌的逻辑
+- [x] 完善 jwt 令牌签发功能
+- [ ] 完善授权功能：把所有权限存入 jwt？（会不会有安全隐患？）
+- [ ] 多签发者问题：应用系统可以得到 QQ 和微信签发的 jwt，怎么处理多个令牌？
+- [ ] 实现 sso 受众注册
 
 ## 词汇表
 1. sso：指 shiro-jwt-sso 系统，也指单点登录。
@@ -271,7 +274,8 @@ boyfriend = ask:*
 **sso 没有授权功能吗？** sso 是单点登录系统，目前的想法是 sso 只做登录，授权交给 app 实现。
 
 **为什么 app 也没有授权功能？？** 因为采用了 InI 配置。InIRealm 会根据用户名（`principal`）获取用户的权限。
-但是本系统中，`principal` 和 `credentials` 都是 jwt，用户名藏在 jwt 里。虽然可以写一些简单的代码实现上述功能，但是太懒了-_-!
+但是本系统中，`principal` 和 `credentials` 都是 jwt，用户名藏在 jwt 里。
+<del>虽然可以写一些简单的代码实现上述功能，但是太懒了-_-!</del>（实现起来似乎不简单）
 
 ## 排坑指南
 这里记录了在编写代码时遇到的坑。详见博客。
