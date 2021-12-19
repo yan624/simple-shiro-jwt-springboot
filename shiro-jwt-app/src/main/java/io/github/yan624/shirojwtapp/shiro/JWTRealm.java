@@ -6,6 +6,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.AuthenticatingRealm;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -16,6 +17,9 @@ import java.util.Date;
  * @since 2021-12-16
  */
 public class JWTRealm extends AuthenticatingRealm {
+
+    @Value("${secret}")
+    private String secret;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -28,7 +32,7 @@ public class JWTRealm extends AuthenticatingRealm {
         final String jwt = bearerToken.getToken();
         DecodedJWT verifiedJWT = null;
         try {
-            verifiedJWT = JwtUtil.verify(jwt);
+            verifiedJWT = JwtUtil.verify(jwt, secret);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (TokenExpiredException teex){
