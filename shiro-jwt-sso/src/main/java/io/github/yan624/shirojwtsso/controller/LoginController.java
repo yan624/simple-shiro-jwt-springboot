@@ -29,6 +29,7 @@ public class LoginController {
         return new ModelAndView("login", map);
     }
 
+    // todo: 如果直接访问登录页面，那么这里的部分参数是 null
     @PostMapping("/login")
     @ResponseBody
     public String login(
@@ -51,7 +52,7 @@ public class LoginController {
             // 本系统使用 ini 配置，所以信息不是很多，只有用户名和密码。目前将账号作为 sub。
             // 这里可以对 principal 进行强转，然后取出用户名和账号，甚至是更多信息。
             // principal 是在认证过程中存储的，应该是从数据库中查询出的数据。
-            sub = "jwt subject";
+            sub = "an unique id";
         }
         // 用户名指的是用户的本名或昵称，不应该作为账号名（有些系统可能是账号名）
         final String jwt = JwtUtil.sign("zhangsan", sub, aud);

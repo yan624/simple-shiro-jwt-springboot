@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class UserInfo implements Serializable {
     private String username;
-    // 手机号 phone number
+    // 主体，一般是 sso 系统中存储的用户 id，用手机号、邮箱之类的账户不太安全。它们不一定是唯一的。
     private String subject;
 
     public UserInfo(String username, String subject) {
