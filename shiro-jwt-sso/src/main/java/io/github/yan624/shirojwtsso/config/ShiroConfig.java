@@ -18,6 +18,8 @@ public class ShiroConfig {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
 
         chainDefinition.addPathDefinition("/login", "anon");
+        chainDefinition.addPathDefinition("/css/**", "anon");
+        chainDefinition.addPathDefinition("/img/**", "anon");
 
         // all other paths require a logged in user
         chainDefinition.addPathDefinition("/**", "authc");
