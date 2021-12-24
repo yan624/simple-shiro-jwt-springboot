@@ -18,8 +18,11 @@ import java.util.Date;
  */
 public class JWTRealm extends AuthenticatingRealm {
 
-    @Value("${secret}")
+    @Value("${oursso.jwt.secret}")
     private String secret;
+
+    @Value("${oursso.jwt.aud}")
+    private String audience;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -32,7 +35,7 @@ public class JWTRealm extends AuthenticatingRealm {
         final String jwt = bearerToken.getToken();
         DecodedJWT verifiedJWT = null;
         try {
-            verifiedJWT = JwtUtil.verify(jwt, secret);
+            verifiedJWT = JwtUtil.verify(jwt, audience, secret);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (TokenExpiredException teex){

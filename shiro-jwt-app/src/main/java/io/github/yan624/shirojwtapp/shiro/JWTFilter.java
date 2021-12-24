@@ -10,7 +10,11 @@ import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.springframework.core.env.Environment;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -102,10 +106,14 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
         if (referer == null){
             referer = INDEX_URL;
         }
+        final ServletContext sc = request.getServletContext();
+        final WebApplicationContext webAppContext = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+        final Environment env = webAppContext.getEnvironment();
+        final String audience = env.getProperty("oursso.jwt.aud");
         String loginUrlWithParam = loginUrl +
                 "?loginUrl=" + CALLBACK_LOGIN_URL +
                 "&backUrl=" + referer +
-                "&aud=" + JwtUtil.AUDIENCE;
+                "&aud=" + audience;
         return loginUrlWithParam;
     }
 }

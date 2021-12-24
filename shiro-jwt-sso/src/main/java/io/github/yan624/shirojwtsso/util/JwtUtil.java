@@ -29,7 +29,7 @@ public class JwtUtil {
         HEADER.put("typ", "jwt");
         // 模拟从数据库取得所有受众
         AUDIENCES.put("shiro-jwt-app", "secret key");
-        AUDIENCES.put("some apps", "app's secret key");
+//        AUDIENCES.put("some apps", "app's secret key");
     }
 
     public static String sign(String username, String subject, String aud) throws UnsupportedEncodingException {

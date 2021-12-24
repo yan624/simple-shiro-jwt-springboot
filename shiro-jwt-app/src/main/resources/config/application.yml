@@ -1,4 +1,7 @@
-# 该秘钥由 shiro-jwt-sso 颁发。尝试修改这个值，你会发现你无法登录了。
-secret: secret key
+oursso:
+  jwt:
+    aud: shiro-jwt-app
+    # 该秘钥由 shiro-jwt-sso 颁发。尝试修改这个值，你会发现你无法登录了。
+    secret: secret key
 
 
