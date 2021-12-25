@@ -21,8 +21,8 @@ public class ShiroConfig {
         chainDefinition.addPathDefinition("/css/**", "anon");
         chainDefinition.addPathDefinition("/img/**", "anon");
 
-        // all other paths require a logged in user
-        chainDefinition.addPathDefinition("/**", "authc");
+        // 注意不要使用 jsp，它似乎会默认创建 session，导致与 noSessionCreation 冲突
+        chainDefinition.addPathDefinition("/**", "noSessionCreation, authc");
         return chainDefinition;
     }
 

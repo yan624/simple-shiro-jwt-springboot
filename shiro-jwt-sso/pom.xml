@@ -17,12 +17,12 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
-        <!-- To compile JSP file。想要 springboot 项目访问 jsp，必须要加这个，让 maven 编译 jsp，并且不能是 provided-->
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <!--<scope>provided</scope>-->
-        </dependency>
+<!--        &lt;!&ndash; To compile JSP file。想要 springboot 项目访问 jsp，必须要加这个，让 maven 编译 jsp，并且不能是 provided&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tomcat.embed</groupId>-->
+<!--            <artifactId>tomcat-embed-jasper</artifactId>-->
+<!--            &lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,18 +58,18 @@
     </dependencies>
 
     <build>
-        <resources>
-            <!-- 想要 springboot 项目访问 jsp，必须要加这个 -->
-            <resource>
-                <directory>src/main/webapp</directory>
-                <!--这里必须是META-INF/resources-->
-                <targetPath>META-INF/resources</targetPath>
-                <includes>
-                    <include>**/**</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
+<!--        <resources>-->
+<!--            &lt;!&ndash; 想要 springboot 项目访问 jsp，必须要加这个 &ndash;&gt;-->
+<!--            <resource>-->
+<!--                <directory>src/main/webapp</directory>-->
+<!--                &lt;!&ndash;这里必须是META-INF/resources&ndash;&gt;-->
+<!--                <targetPath>META-INF/resources</targetPath>-->
+<!--                <includes>-->
+<!--                    <include>**/**</include>-->
+<!--                </includes>-->
+<!--                <filtering>false</filtering>-->
+<!--            </resource>-->
+<!--        </resources>-->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

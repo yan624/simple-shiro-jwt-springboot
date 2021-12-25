@@ -20,15 +20,6 @@ import java.util.Map;
  */
 @Controller
 public class LoginController {
-    @RequestMapping("/login.html")
-    public ModelAndView showLogin(String loginUrl, String backUrl, String aud){
-        Map<String, String> map = new HashMap<>();
-        map.put("backUrl", backUrl);
-        map.put("loginUrl", loginUrl);
-        map.put("aud", aud);
-        return new ModelAndView("login", map);
-    }
-
     // todo: 如果直接访问登录页面，那么这里的部分参数是 null
     @PostMapping("/login")
     @ResponseBody

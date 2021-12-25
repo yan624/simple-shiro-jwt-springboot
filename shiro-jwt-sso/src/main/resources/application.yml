@@ -1,8 +1,2 @@
-spring:
-  mvc:
-    view:
-      prefix: /WEB-INF/jsp/
-      suffix: .jsp
-
 shiro:
   loginUrl: /login.html

@@ -1,7 +1,7 @@
 待补充文档……
 
 ## todo
-- [ ] shiro-jwt-sso 禁用 session
+- [x] shiro-jwt-sso 禁用 session --- `noSessionCreation`
 - [ ] shiro-jwt-app 也做成无状态服务器？
 - [x] 根据 [JWT 文档](https://datatracker.ietf.org/doc/html/rfc7519) 严格执行判断无效令牌的逻辑
 - [x] 完善 jwt 令牌签发功能
