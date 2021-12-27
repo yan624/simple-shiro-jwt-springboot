@@ -1,15 +1,13 @@
 package io.github.yan624.shirojwtapp.shiro;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import io.github.yan624.shirojwtapp.config.JWTConfigProperties;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.AuthenticatingRealm;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 
 /**
  * @author 朱若尘
@@ -18,11 +16,11 @@ import java.util.Date;
  */
 public class JWTRealm extends AuthenticatingRealm {
 
-    @Value("${oursso.jwt.secret}")
-    private String secret;
+    private final JWTConfigProperties jwtProp;
 
-    @Value("${oursso.jwt.aud}")
-    private String audience;
+    public JWTRealm(JWTConfigProperties jwtProp) {
+        this.jwtProp = jwtProp;
+    }
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -35,7 +33,7 @@ public class JWTRealm extends AuthenticatingRealm {
         final String jwt = bearerToken.getToken();
         DecodedJWT verifiedJWT = null;
         try {
-            verifiedJWT = JwtUtil.verify(jwt, audience, secret);
+            verifiedJWT = JwtUtil.verify(jwt, this.jwtProp.getAudAccess(), this.jwtProp.getSecret());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (TokenExpiredException teex){

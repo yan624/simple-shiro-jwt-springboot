@@ -13,7 +13,7 @@
     <div class="content">
         <div class="form sign-in">
             <form action="login" method="post">
-                <input id="loginUrl" type="hidden" name="loginUrl" value=""/>
+                <input id="storageUrl" type="hidden" name="storageUrl" value=""/>
                 <input id="backUrl" type="hidden" name="backUrl" value=""/>
                 <input id="aud" type="hidden" name="aud" value=""/>
                 <h2>欢迎回来</h2>
@@ -81,7 +81,7 @@
         return "";
     }
 
-    document.getElementById("loginUrl").value = getQueryVariable('loginUrl');
+    document.getElementById("storageUrl").value = getQueryVariable('storageUrl');
     document.getElementById("backUrl").value = getQueryVariable('backUrl');
     document.getElementById("aud").value = getQueryVariable('aud');
 

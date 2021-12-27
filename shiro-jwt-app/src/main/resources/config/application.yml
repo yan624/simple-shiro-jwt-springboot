@@ -1,7 +1,13 @@
-oursso:
-  jwt:
-    aud: shiro-jwt-app
-    # 该秘钥由 shiro-jwt-sso 颁发。尝试修改这个值，你会发现你无法登录了。
-    secret: secret key
+jwt:
+  # 暂时不考虑一个应用内有多个受众的问题
+  # 第三方授权时，受众应该由应用系统指定，无论它指定多少个受众，都只会局限于其本身使用。
+  # 单点登录时，应该由单点登录系统指定其受众者。因为用户的受众是已知的。很容易就可以知道自家的用户注册过自家的哪些产品。
+  # 由于我们实现的是 sso，所以 JWTFilter 在 url 中指定受众的逻辑应该被移除。或许应该交由 sso 设置受众者。
+  audiences:
+    accessToken: ${thisapp.site}/access_token
+  storageUrl: ${thisapp.protocolSite}/login.html
+  audAccess: ${jwt.audiences.accessToken}
+  # 该秘钥由 shiro-jwt-sso 颁发。尝试修改这个值，你会发现你无法登录了。
+  secret: secret key
 
 

@@ -1,5 +1,10 @@
+thisapp:
+  site: '${server.address}:${server.port}'
+  protocolSite: 'http://${thisapp.site}'
+
 server:
   port: 8081
+  address: localhost
 
 shiro:
   # loginUrl 不要写成 'localhost:8080/login.html'，试了好长时间跳转不过去！

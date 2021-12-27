@@ -8,9 +8,9 @@ import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.Filter;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.Map;
  * @since 2021-12-14
  */
 @Configuration
+@EnableConfigurationProperties(JWTConfigProperties.class)
 public class ShiroConfig {
 
     @Autowired(required = false)
@@ -37,8 +38,8 @@ public class ShiroConfig {
     protected String unauthorizedUrl;
 
     @Bean
-    public JWTRealm jwtRealm(){
-        return new JWTRealm();
+    public JWTRealm jwtRealm(JWTConfigProperties prop){
+        return new JWTRealm(prop);
     }
 
     @Bean
@@ -53,7 +54,9 @@ public class ShiroConfig {
     @Bean
     protected ShiroFilterFactoryBean shiroFilterFactoryBean(
             SecurityManager securityManager,
-            ShiroFilterChainDefinition shiroFilterChainDefinition) {
+            ShiroFilterChainDefinition shiroFilterChainDefinition,
+            JWTConfigProperties prop
+    ) {
         ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
 
         filterFactoryBean.setLoginUrl(loginUrl);
@@ -64,7 +67,7 @@ public class ShiroConfig {
 //        filterFactoryBean.setGlobalFilters(globalFilters());
         filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
 
-        filterMap.put("jwtFilter", new JWTFilter());
+        filterMap.put("jwtFilter", new JWTFilter(prop));
         filterFactoryBean.setFilters(filterMap);
         return filterFactoryBean;
     }

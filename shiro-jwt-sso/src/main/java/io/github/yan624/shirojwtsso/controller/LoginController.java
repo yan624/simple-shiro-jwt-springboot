@@ -25,7 +25,7 @@ public class LoginController {
     @ResponseBody
     public String login(
             String account, String password,
-            String loginUrl, String backUrl, String aud,
+            String storageUrl, String backUrl, String aud,
             HttpServletResponse resp
     ) throws IOException {
         // 1. 登录 | login
@@ -50,7 +50,7 @@ public class LoginController {
 
         // 3. 重定向回用户访问的链接 | redirect to the link the user access
         // todo: 处理 url 参数？直接拼接可能会引起异常？
-        String redirectUrl = loginUrl + "?backUrl=" + backUrl + "&authorization=" + jwt;
+        String redirectUrl = storageUrl + "?backUrl=" + backUrl + "&authorization=" + jwt;
         resp.sendRedirect(redirectUrl);
         return "login success";
 //        return "redirect:" + redirectUrl;

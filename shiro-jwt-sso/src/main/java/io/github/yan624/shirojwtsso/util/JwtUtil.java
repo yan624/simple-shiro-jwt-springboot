@@ -28,7 +28,7 @@ public class JwtUtil {
         HEADER.put("alg", "HS256");
         HEADER.put("typ", "jwt");
         // 模拟从数据库取得所有受众
-        AUDIENCES.put("shiro-jwt-app", "secret key");
+        AUDIENCES.put("localhost:8081/access_token", "secret key");
 //        AUDIENCES.put("some apps", "app's secret key");
     }
 

@@ -1,26 +1,17 @@
 package io.github.yan624.shirojwtapp.shiro;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import io.github.yan624.shirojwtapp.config.JWTConfigProperties;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.BearerToken;
-import org.apache.shiro.authc.ExpiredCredentialsException;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.core.env.Environment;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * <b>注意：shiro 会拦截很多错误，而不抛出去。很难调试到底哪里有问题。</b>
@@ -31,9 +22,14 @@ import java.util.Date;
  */
 public class JWTFilter extends BearerHttpAuthenticationFilter {
 
-    public static final String CALLBACK_LOGIN_URL = "http://localhost:8081/login.html";
     public static final String INDEX_URL = "http://localhost:8081/index.html";
     public static final String LOGOUT_URL = "logout";
+
+    private final JWTConfigProperties jwtProp;
+
+    public JWTFilter(JWTConfigProperties jwtProp) {
+        this.jwtProp = jwtProp;
+    }
 
     /**
      * <p>判断是否允许访问。必须在这验证 jwt 是否过期。</p>
@@ -106,14 +102,10 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
         if (referer == null){
             referer = INDEX_URL;
         }
-        final ServletContext sc = request.getServletContext();
-        final WebApplicationContext webAppContext = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
-        final Environment env = webAppContext.getEnvironment();
-        final String audience = env.getProperty("oursso.jwt.aud");
         String loginUrlWithParam = loginUrl +
-                "?loginUrl=" + CALLBACK_LOGIN_URL +
-                "&backUrl=" + referer +
-                "&aud=" + audience;
+                "?backUrl=" + referer +
+                "&storageUrl=" + this.jwtProp.getStorageUrl() +
+                "&aud=" + this.jwtProp.getAudAccess();
         return loginUrlWithParam;
     }
 }
