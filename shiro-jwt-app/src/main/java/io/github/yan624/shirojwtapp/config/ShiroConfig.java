@@ -9,6 +9,7 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +17,6 @@ import javax.servlet.Filter;
 import java.util.Map;
 
 /**
- * 大部分内容从 {@link org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration} 复制
  * @author 朱若尘
  * @version 1.0-SNAPSHOT
  * @since 2021-12-14
@@ -24,53 +24,35 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties(JWTConfigProperties.class)
 public class ShiroConfig {
-
-    @Autowired(required = false)
-    protected Map<String, Filter> filterMap;
-
-    @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")
-    protected String loginUrl;
-
-    @Value("#{ @environment['shiro.successUrl'] ?: '/' }")
-    protected String successUrl;
-
-    @Value("#{ @environment['shiro.unauthorizedUrl'] ?: null }")
-    protected String unauthorizedUrl;
-
     @Bean
     public JWTRealm jwtRealm(JWTConfigProperties prop){
         return new JWTRealm(prop);
     }
 
     @Bean
-    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
-        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
+    public JWTFilter jwtFilter(JWTConfigProperties prop){
+        return new JWTFilter(prop);
+    }
 
-        // all other paths require a logged in user
-        chainDefinition.addPathDefinition("/user/**", "jwtFilter");
-        return chainDefinition;
+    /**
+     * <p>让 Spring 不要管理这个 filter。</p>
+     * <p>基于当前的配置，其实不必配置此类。然而未来可能会出现意外。比如在配置 `/user/post/** = anon` 后。</p>
+     * <p>你会发现上面的配置是无效的。系统还是会拦截 /user/post/**。jwtFilter 被 Spring 托管了。详见博客。</p>
+     * @param jwtFilter
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean<JWTFilter> registration(JWTFilter jwtFilter) {
+        FilterRegistrationBean<JWTFilter> registration = new FilterRegistrationBean<>(jwtFilter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     @Bean
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean(
-            SecurityManager securityManager,
-            ShiroFilterChainDefinition shiroFilterChainDefinition,
-            JWTConfigProperties prop
-    ) {
-        ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
-
-        filterFactoryBean.setLoginUrl(loginUrl);
-        filterFactoryBean.setSuccessUrl(successUrl);
-        filterFactoryBean.setUnauthorizedUrl(unauthorizedUrl);
-
-        filterFactoryBean.setSecurityManager(securityManager);
-//        filterFactoryBean.setGlobalFilters(globalFilters());
-        filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
-
-        filterMap.put("jwtFilter", new JWTFilter(prop));
-        filterFactoryBean.setFilters(filterMap);
-        return filterFactoryBean;
+    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
+        chainDefinition.addPathDefinition("/user/**", "jwtFilter");
+        return chainDefinition;
     }
-
 }
 
