@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.yan624</groupId>
     <artifactId>shiro-jwt-sso</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>shiro-jwt-sso</name>
     <description>shiro-jwt-sso</description>
     <properties>
