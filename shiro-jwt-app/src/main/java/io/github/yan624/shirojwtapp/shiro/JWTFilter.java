@@ -3,7 +3,11 @@ package io.github.yan624.shirojwtapp.shiro;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import io.github.yan624.shirojwtapp.config.JWTConfigProperties;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
+import org.apache.shiro.authc.AbstractAuthenticator;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 
@@ -16,6 +20,13 @@ import java.io.IOException;
 /**
  * <b>注意：shiro 会拦截很多错误，而不抛出去。很难调试到底哪里有问题。</b>
  * <b>比如说明明是 404，shiro 居然给我重定向到 /error。我还以为是代码写错了。</b>
+ * <p>1. 在使用多个 Realm 的情况下，如果 {@link ModularRealmAuthenticator} 使用了默认的 {@link AtLeastOneSuccessfulStrategy}
+ * 策略，shiro 居然会无视其中抛出的异常！最后抛出一个“没有一个 Realm 能够认证成功的 AuthenticationException 异常”。然后就是 2、3 的流程。
+ * 如果只用了单个 Realm，那么就直接进入 2、3 的流程。</p>
+ * <p>2. {@link AbstractAuthenticator#authenticate} 捕获所有异常并强行将其转化为 AuthenticationException。</p>
+ * <p>3. {@link AuthenticatingFilter#executeLogin} 则直接捕获了上面的 AuthenticationException 异常且不抛出。
+ * 此时可以使用 {@link AuthenticatingFilter#onLoginFailure} 处理异常。</p>
+ * <p>综上所述，我们只能知道 shiro 认证失败了，但是不知道为什么失败。异常要么消失了，要么被转化为了 shiro 内置的异常。</p>
  * @author 朱若尘
  * @version 1.0-SNAPSHOT
  * @since 2021-12-16
@@ -54,6 +65,13 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
         return super.isAccessAllowed(request, response, mappedValue);
     }
 
+    /**
+     * 此处的所有自定义代码似乎可移入 onLoginFailure()
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         boolean loggedIn = false; //false by default or we wouldn't be in this method
@@ -61,16 +79,14 @@ public class JWTFilter extends BearerHttpAuthenticationFilter {
             loggedIn = executeLogin(request, response);
         }
         if (!loggedIn) {
-            // todo:
-            // 需不需要在这把用户本地的 token 删除？
+            // todo: 需不需要在这把用户本地的 token 删除？
             // 这里会跳转到登录页面，等用户登录后，虽然本系统会覆盖原来的 token，但是感觉逻辑不对。应该在登出之后，立即清除本地 token。
             // 目前我暂时想不到办法能够清除它。
             getSubject(request, response).logout();
 
-            final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             // 如果是ajax请求
-            if("XMLHttpRequest".equals(httpServletRequest.getHeader("X-Requested-With"))){
+            if("XMLHttpRequest".equals(((HttpServletRequest) request).getHeader("X-Requested-With"))){
+                final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
                 httpServletResponse.setHeader("redirect", this.getRedirectUrl(request, response));
                 httpServletResponse.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
                 return false;

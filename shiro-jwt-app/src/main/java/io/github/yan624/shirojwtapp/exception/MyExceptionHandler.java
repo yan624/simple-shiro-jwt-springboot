@@ -17,6 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 @ControllerAdvice
 public class MyExceptionHandler {
 
+    /**
+     * 处理未授权异常
+     * @param httpServletResponse
+     */
     // 这里，HttpStatus.UNAUTHORIZED 应该是未认证的意思，HttpStatus.FORBIDDEN 应该才是未授权的意思。
     @ResponseStatus(HttpStatus.FORBIDDEN)
 //    @ResponseStatus(HttpStatus.UNAUTHORIZED)

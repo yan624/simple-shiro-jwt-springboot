@@ -3,7 +3,7 @@
 ## todo
 - [x] shiro-jwt-sso 禁用 session --- `noSessionCreation`
 - [ ] shiro-jwt-app 也做成无状态服务器？
-- [ ] 统一处理 jwt 异常
+- [x] 统一处理 jwt 异常：无法实现，shiro 捕获了所有异常并且不抛出。
 - [ ] 令牌刷新功能（refresh token）
 - [x] 根据 [JWT 文档](https://datatracker.ietf.org/doc/html/rfc7519) 严格执行判断无效令牌的逻辑
 - [x] 完善 jwt 令牌签发功能

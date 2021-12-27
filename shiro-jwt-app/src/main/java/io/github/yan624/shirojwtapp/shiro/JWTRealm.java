@@ -37,6 +37,7 @@ public class JWTRealm extends AuthenticatingRealm {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (TokenExpiredException teex){
+            // todo:由于异常无法抛出，只能记录日志
             teex.printStackTrace();
             // throw shiro's exception
             throw new ExpiredCredentialsException();
