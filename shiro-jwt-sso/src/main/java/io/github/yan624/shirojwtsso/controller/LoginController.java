@@ -1,6 +1,7 @@
 package io.github.yan624.shirojwtsso.controller;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.yan624.shirojwtsso.util.JwtUtil;
 import org.apache.shiro.SecurityUtils;
@@ -10,13 +11,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author 朱若尘
@@ -51,9 +50,9 @@ public class LoginController {
             sub = "an unique id";
         }
         // 用户名指的是用户的本名或昵称，不应该作为账号名（有些系统可能是账号名）
-        final String jwt = JwtUtil.signAccessToken("zhangsan", sub, aud);
+        final String jwt = JwtUtil.signAccessToken("zhang san", sub, aud);
         // refresh token 只需要简单的信息即可。由于目前我们的例子比较简单，因此与 access token 没有太大区别。
-        final String refreshToken = JwtUtil.signRefreshToken("", sub, aud);
+        final String refreshToken = JwtUtil.signRefreshToken(sub, aud);
 
         // 3. 重定向回用户访问的链接 | redirect to the link the user access
         // todo: 处理 url 参数？直接拼接可能会引起异常？
@@ -94,20 +93,24 @@ public class LoginController {
     }
 
     private boolean checkToken(String refreshToken, String accessToken) {
-        // refresh token
-        final DecodedJWT refreshJWT = JWT.decode(refreshToken);
-        // access token
-        final DecodedJWT accessJWT = JWT.decode(accessToken);
-        // 二者的 issuer 必须相同
-        if (JwtUtil.ISSUER.equals(refreshJWT.getIssuer()) && JwtUtil.ISSUER.equals(accessJWT.getIssuer())){
-            // access token 已过期，但是 refresh 未过期。
-            if (System.currentTimeMillis() > accessJWT.getExpiresAt().getTime() &&
-                    System.currentTimeMillis() < refreshJWT.getExpiresAt().getTime()) {
-                // 验证 audience……
-                if (true){
-                    return true;
-                }
+        try {
+            // refresh token
+            final DecodedJWT refreshJWT = JWT.decode(refreshToken);
+            // access token
+            final DecodedJWT accessJWT = JWT.decode(accessToken);
+            // 二者的 issuer 必须相同
+            if (JwtUtil.ISSUER.equals(refreshJWT.getIssuer()) && JwtUtil.ISSUER.equals(accessJWT.getIssuer())) {
+                final String accessJWTAudience = accessJWT.getAudience().get(0);
+                // 二者的 audience 必须相同
+                if (accessJWTAudience.equals(refreshJWT.getAudience().get(0)))
+                    // 保证 access token 已过期，但是 refresh 未过期。
+                    if (System.currentTimeMillis() > accessJWT.getExpiresAt().getTime() &&
+                            System.currentTimeMillis() < refreshJWT.getExpiresAt().getTime()) {
+                        return true;
+                    }
             }
+        } catch (Exception e){
+            e.printStackTrace();
         }
         return false;
     }

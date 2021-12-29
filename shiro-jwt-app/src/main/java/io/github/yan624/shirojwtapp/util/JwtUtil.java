@@ -28,19 +28,20 @@ public class JwtUtil {
     public static DecodedJWT verify(
             String token, String audience, String secret
         ) throws UnsupportedEncodingException {
-        final String aud = JwtUtil.decode(token).getClaim("aud").asString();
-        // 每个处理 JWT 的 principal 都必须在 audience 声明中确认是自己。
-        // 如果当 aud 存在时却无法确认，那么应该拒绝这个 JWT。
-        // see https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3
-        if (!audience.equals(aud)){
-            return null;
-        }
-
         // 使用 sso 授予的秘钥，用于验证。
         Algorithm algorithm = Algorithm.HMAC256(secret);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
+                // 每个处理 JWT 的 principal 都必须在 audience 声明中确认是自己。
+                // 如果当 aud 存在时却无法确认，那么应该拒绝这个 JWT。
+                // see https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3
                 .withAudience(audience)
+                // 确保 iat, exp, nbf 都是有效的。
+                // 确保当前时间 > iat（签发时间），如果不是，那么这个 jwt 可能是伪造的，或者签发者的代码有问题；
+                // 确保当前时间 < exp（过期时间）；
+                // 确保当前时间 > nbf (not before)。
+                // 其中参数代表顺移多少秒，0 代表不顺移。
+                .acceptLeeway(0)
                 .build(); //Reusable verifier instance
         return verifier.verify(token);
     }
@@ -48,16 +49,5 @@ public class JwtUtil {
     public static boolean isExpire(String token) throws JWTDecodeException {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getExpiresAt().getTime() < System.currentTimeMillis() ;
-    }
-
-    /**
-     * 注意，JWT.decode() 不验证令牌的签名。如果使用该方法，就必须信任这个令牌或者你已经校验过。
-     * @param token
-     * @return
-     * @throws JWTDecodeException
-     */
-    public static DecodedJWT decode(String token){
-        DecodedJWT jwt = JWT.decode(token);
-        return jwt;
     }
 }

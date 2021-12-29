@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -41,11 +40,16 @@ public class JwtUtil {
 //        AUDIENCES.put("some apps", "app's secret key");
     }
 
+    private static Algorithm getAlg(String aud) throws UnsupportedEncodingException {
+        final String secret = AUDIENCES.get(aud);
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        return algorithm;
+    }
+
     public static String signAccessToken(String username, String subject, String aud) throws UnsupportedEncodingException {
         // jti有啥用 https://stackoverflow.com/questions/28907831/how-to-use-jti-claim-in-a-jwt
         Date date = new Date(System.currentTimeMillis() + ACCESS_EXPIRE_TIME);
-        final String secret = AUDIENCES.get(aud);
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+        final Algorithm algorithm = getAlg(aud);
         String token = JWT.create()
                 .withHeader(HEADER)
                 .withIssuer(ISSUER)
@@ -58,11 +62,9 @@ public class JwtUtil {
         return token;
     }
 
-    public static String signRefreshToken(String username, String subject, String aud) throws UnsupportedEncodingException {
-        // jti有啥用 https://stackoverflow.com/questions/28907831/how-to-use-jti-claim-in-a-jwt
+    public static String signRefreshToken(String subject, String aud) throws UnsupportedEncodingException {
         Date date = new Date(System.currentTimeMillis() + REFRESH_EXPIRE_TIME);
-        final String secret = AUDIENCES.get(aud);
-        Algorithm algorithm = Algorithm.HMAC256(secret);
+        final Algorithm algorithm = getAlg(aud);
         String token = JWT.create()
                 .withHeader(HEADER)
                 .withIssuer(ISSUER)
@@ -70,8 +72,24 @@ public class JwtUtil {
                 .withAudience(aud)
                 .withSubject(subject)
                 .withExpiresAt(date)
-                .withClaim("username", username)
                 .sign(algorithm);
         return token;
+    }
+
+    /**
+     *
+     * @param token jwt
+     * @param aud audience
+     * @return false 代表未过期，如果已过期则抛出 JWTVerificationException 异常。
+     * @throws JWTVerificationException
+     * @throws UnsupportedEncodingException
+     */
+    public static boolean isExpired(String token, String aud) throws JWTVerificationException, UnsupportedEncodingException {
+        final Algorithm algorithm = getAlg(aud);
+        JWTVerifier verifier = JWT.require(algorithm)
+                .acceptLeeway(0)
+                .build();
+        verifier.verify(token);
+        return false;
     }
 }

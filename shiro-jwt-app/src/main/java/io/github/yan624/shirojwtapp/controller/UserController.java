@@ -1,5 +1,6 @@
 package io.github.yan624.shirojwtapp.controller;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.yan624.shirojwtapp.po.UserInfo;
 import io.github.yan624.shirojwtapp.util.JwtUtil;
@@ -24,8 +25,9 @@ public class UserController {
     @ResponseBody
     public UserInfo getUserInfo(HttpServletRequest req, HttpServletResponse resp) {
         Subject subject = SecurityUtils.getSubject();
-        final String principal = (String) subject.getPrincipal();
-        final DecodedJWT decodedJWT = JwtUtil.decode(principal);
+        final String token = (String) subject.getPrincipal();
+        // 注意，JWT.decode() 不验证令牌的签名。如果使用该方法，就必须信任这个令牌或者你已经校验过。
+        final DecodedJWT decodedJWT = JWT.decode(token);
         return new UserInfo(
                 decodedJWT.getClaim("username").asString(),
                 decodedJWT.getSubject()

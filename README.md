@@ -1,4 +1,4 @@
-待补充文档……
+[博客地址](http://localhost:3000/#/认证与授权/shiro-jwt) （暂未部署）
 
 ## todo
 - [x] shiro-jwt-sso 禁用 session --- `noSessionCreation`
@@ -17,8 +17,8 @@
 ## 特性
 1. 使用 [shiro](https://shiro.apache.org/) 作为认证框架。
 2. 利用 [jwt](https://jwt.io/) 实现单点登录功能。
-3. shiro-jwt-sso 作为无状态服务器。
-4. shiro-jwt-app 作为有状态服务器，存储用户的 jwt。
+3. shiro-jwt-sso 作为无状态认证服务器。
+4. shiro-jwt-app 作为应用服务器（目前会存储用户的 jwt）
 5. 利用 shiro 新特性，100 行代码实现 shiro-jwt 逻辑。（相对于网络上其它教程，具有更简单的逻辑）
 
 ## 你需要哪些前置知识
@@ -39,7 +39,7 @@
 3. 输入用户名密码后，直接重定向回 http://localhost:8081/index.html  
    ![用户信息系统](img/用户信息系统.png)
 4. 点击 girlInfo 按钮，跳转到未授权页面。
-5. 过几分钟后，jwt 失效。按 F5 刷新，又被重定向到 sso。
+5. 过几分钟后，jwt 失效。按 F5 刷新页面，又被重定向到 sso。
 
 ## 用户请求时序图
 
