@@ -20,11 +20,17 @@
     }
     let backUrl = getQueryVariable("backUrl");
     let authorization = getQueryVariable("authorization");
+    let refreshToken = getQueryVariable("refresh_token");
     if (authorization != ""){
         localStorage.setItem("Authorization", authorization);
     }
+    if (refreshToken != ""){
+        localStorage.setItem("refresh_token", refreshToken);
+    }
     if (backUrl != ""){
         window.location.replace(backUrl)
+    }else{
+
     }
 </script>
 </body>

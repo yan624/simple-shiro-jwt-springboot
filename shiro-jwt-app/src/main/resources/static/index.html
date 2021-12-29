@@ -18,13 +18,18 @@
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/8.0.20/jsrsasign-all-min.js"></script>
+<script src="js/jwt-utils.js"></script>
 <script>
     $(function(){
-        // console.log(localStorage.getItem("Authorization"))
+        let info = checkAndReturnToken()
+        let success = info[0], code = info[1], jwt = info[2];
+        // 如果 success == false，应该手动重定向到登录页面，这里暂时不做处理。让后端处理这个逻辑。
+        // if (success)
         $.ajax({
             type: "GET",
             url: "/user/userInfoJson",
-            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            headers: {"Authorization": "Bearer " + jwt},
             complete: _complete,
             success: function(data) {
                 console.log(data.username)
@@ -40,10 +45,14 @@
     });
 
     function getUserInfoJson(){
+        let info = checkAndReturnToken()
+        let success = info[0], code = info[1], jwt = info[2];
+        // 如果 success == false，应该手动重定向到登录页面，这里暂时不做处理。让后端处理这个逻辑。
+        // if (success)
         $.ajax({
             type: "GET",
             url: "/user/userInfoJson",
-            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            headers: {"Authorization": "Bearer " + jwt},
             complete: _complete,
             success: function(result) {
                 console.log(result)
@@ -59,10 +68,14 @@
     }
 
     function getGirlInfo(){
+        let info = checkAndReturnToken()
+        let success = info[0], code = info[1], jwt = info[2];
+        // 如果 success == false，应该手动重定向到登录页面，这里暂时不做处理。让后端处理这个逻辑。
+        // if (success)
         $.ajax({
             type: "GET",
             url: "/user/girlInfo",
-            headers: {"Authorization": "Bearer " + localStorage.getItem("Authorization")},
+            headers: {"Authorization": "Bearer " + jwt},
             complete: _complete,
             success: function(result) {
                 console.log(result)

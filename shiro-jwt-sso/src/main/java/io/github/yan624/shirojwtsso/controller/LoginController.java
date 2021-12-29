@@ -1,15 +1,20 @@
 package io.github.yan624.shirojwtsso.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.github.yan624.shirojwtsso.util.JwtUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,23 +51,65 @@ public class LoginController {
             sub = "an unique id";
         }
         // 用户名指的是用户的本名或昵称，不应该作为账号名（有些系统可能是账号名）
-        final String jwt = JwtUtil.sign("zhangsan", sub, aud);
+        final String jwt = JwtUtil.signAccessToken("zhangsan", sub, aud);
+        // refresh token 只需要简单的信息即可。由于目前我们的例子比较简单，因此与 access token 没有太大区别。
+        final String refreshToken = JwtUtil.signRefreshToken("", sub, aud);
 
         // 3. 重定向回用户访问的链接 | redirect to the link the user access
         // todo: 处理 url 参数？直接拼接可能会引起异常？
-        String redirectUrl = storageUrl + "?backUrl=" + backUrl + "&authorization=" + jwt;
+        String redirectUrl = storageUrl +
+                "?backUrl=" + backUrl +
+                "&authorization=" + jwt +
+                "&refresh_token=" + refreshToken;
         resp.sendRedirect(redirectUrl);
         return "login success";
-//        return "redirect:" + redirectUrl;
-        // 试了很久下面的方式，最终还是无法实现
-        // 原因可能是：当你发送一个重定向请求后（302 响应），“浏览器”会查看 `Location`，然后向该位置发送一个新的请求。
-        // 由于这个请求是自动的，因此你的响应头丢失了。
-        // see https://stackoverflow.com/questions/34972006/how-to-pass-new-header-to-sendredirect
-//        resp.addHeader("Authorization", "Bearer " + jwt);
-//        resp.addHeader("content-type", "application/json");
-//        resp.addHeader("Access-Control-Expose-Headers","Authorization");
-//        resp.sendRedirect(backUrl + "?Authorization=" + jwt);
-//        return "redirect:userInfo.html";
+    }
+
+    /**
+     * 遵循 https://datatracker.ietf.org/doc/html/rfc6749#page-47
+     * @param jwt   access token
+     * @param grantType must be 'refresh_token'
+     * @param refreshToken  refresh token
+     * @param scope optional
+     * @return
+     */
+    @PostMapping(value = "/refresh", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @ResponseBody
+    public String refreshToken(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+            String grantType, String refreshToken, String scope
+    ) throws UnsupportedEncodingException {
+        final String accessToken = authorization.split(" ")[1];
+        if ("refresh_token".equals(grantType) && this.checkToken(refreshToken, accessToken)){
+            final DecodedJWT accessJWT = JWT.decode(accessToken);
+            final String sub = accessJWT.getSubject();
+            final String aud = accessJWT.getAudience().get(0);
+            final String username = accessJWT.getClaim("username").asString();
+            System.out.println("更新 " + username + " 的令牌。");
+            // 签发新 jwt，客户端必须删除旧 jwt，并且使用该 jwt。
+            return JwtUtil.signAccessToken(username, sub, aud);
+        }
+        System.out.println("此次更新令牌请求失败。");
+        return null;
+    }
+
+    private boolean checkToken(String refreshToken, String accessToken) {
+        // refresh token
+        final DecodedJWT refreshJWT = JWT.decode(refreshToken);
+        // access token
+        final DecodedJWT accessJWT = JWT.decode(accessToken);
+        // 二者的 issuer 必须相同
+        if (JwtUtil.ISSUER.equals(refreshJWT.getIssuer()) && JwtUtil.ISSUER.equals(accessJWT.getIssuer())){
+            // access token 已过期，但是 refresh 未过期。
+            if (System.currentTimeMillis() > accessJWT.getExpiresAt().getTime() &&
+                    System.currentTimeMillis() < refreshJWT.getExpiresAt().getTime()) {
+                // 验证 audience……
+                if (true){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

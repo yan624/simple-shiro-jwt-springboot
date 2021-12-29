@@ -12,11 +12,15 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // 只允许跨域重定向至本系统的登录页面
-        registry.addMapping("/login.html")
-                //允许远端访问的域名
+//        registry.addMapping("/login.html")
+//                //允许远端访问的域名
+//                .allowedOrigins(ORIGINS)
+//                //允许请求的方法
+//                .allowedMethods("GET");
+        registry.addMapping("/refresh")
                 .allowedOrigins(ORIGINS)
+                .allowedHeaders("Authorization", "Content-Type")
                 //允许请求的方法
-                .allowedMethods("GET");
+                .allowedMethods("POST");
     }
 }
