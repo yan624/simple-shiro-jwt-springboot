@@ -1,4 +1,6 @@
-[博客地址](http://localhost:3000/#/认证与授权/shiro-jwt) （暂未部署）
+[博客地址](http://localhost:3000/#/认证与授权/shiro-jwt) （暂未部署）。
+
+本系统暂不支持处理多受众的 jwt。
 
 ## todo
 - [x] shiro-jwt-sso 禁用 session --- `noSessionCreation`
@@ -40,6 +42,13 @@
    ![用户信息系统](img/用户信息系统.png)
 4. 点击 girlInfo 按钮，跳转到未授权页面。
 5. 过几分钟后，jwt 失效。按 F5 刷新页面，又被重定向到 sso。
+
+### 刷新令牌
+access token 默认过期时间是 20s，refresh token 默认过期时间是 1 个月。
+
+在使用刷新令牌功能后，jwt 失效的逻辑与上述步骤 5 不同。你会发现即使刷新页面也不会让你重新登录，这可以通过按 F12 选择 Network 后观察到。
+在登录成功后，等待 20s 以上，然后刷新页面。你会发现多了一个“http://localhost:8080/refresh”的请求。该请求旨在刷新 access token。
+视觉上你确实没有看见 jwt 失效且页面被重定向，实际上 jwt 已失效，只不过前端帮你又申请了一个过期时间不同的 access token。
 
 ## 用户请求时序图
 

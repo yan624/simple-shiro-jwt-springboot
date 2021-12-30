@@ -15,7 +15,7 @@ function checkAndReturnToken(){
 
     let ap = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(accessToken.split(".")[1]));
     let rp = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(refreshToken.split(".")[1]));
-    // jwt 存储的时间默认单位是秒
+    // jwt 存储的时间的默认单位是秒
     let aexp = ap.exp * 1000;
     let rexp = rp.exp * 1000;
 

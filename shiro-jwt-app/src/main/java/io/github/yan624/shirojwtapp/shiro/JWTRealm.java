@@ -34,7 +34,7 @@ public class JWTRealm extends AuthenticatingRealm {
         final String jwt = bearerToken.getToken();
         DecodedJWT verifiedJWT = null;
         try {
-            verifiedJWT = JwtUtil.verify(jwt, this.jwtProp.getAudAccess(), this.jwtProp.getSecret());
+            verifiedJWT = JwtUtil.verify(jwt, this.jwtProp.getIssuer(), this.jwtProp.getAudAccess(), this.jwtProp.getSecret());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (TokenExpiredException teex){

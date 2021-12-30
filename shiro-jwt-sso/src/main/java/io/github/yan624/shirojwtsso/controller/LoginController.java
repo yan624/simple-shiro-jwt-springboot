@@ -66,9 +66,9 @@ public class LoginController {
 
     /**
      * 遵循 https://datatracker.ietf.org/doc/html/rfc6749#page-47
-     * @param jwt   access token
-     * @param grantType must be 'refresh_token'
+     * @param authorization access token
      * @param refreshToken  refresh token
+     * @param grantType must be 'refresh_token'
      * @param scope optional
      * @return
      */
@@ -76,7 +76,7 @@ public class LoginController {
     @ResponseBody
     public String refreshToken(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-            String grantType, String refreshToken, String scope
+            String refreshToken, String grantType,  String scope
     ) throws UnsupportedEncodingException {
         final String accessToken = authorization.split(" ")[1];
         if ("refresh_token".equals(grantType) && this.checkToken(refreshToken, accessToken)){

@@ -10,8 +10,10 @@ import java.util.Map;
  * @since 2021-12-27
  */
 //@Component
-@ConfigurationProperties("jwt")
+@ConfigurationProperties("jwt3s")
 public class JWTConfigProperties {
+    private String issuer;
+
     private Map<String, String> audiences;
 
     private String storageUrl;
@@ -19,6 +21,14 @@ public class JWTConfigProperties {
     private String audAccess;
 
     private String secret;
+
+    public String getIssuer() {
+        return issuer;
+    }
+
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 
     public Map<String, String> getAudiences() {
         return audiences;
