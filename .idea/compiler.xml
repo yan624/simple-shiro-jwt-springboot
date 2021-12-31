@@ -2,26 +2,21 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="shiro-jwt-app" />
+        <module name="jwt3s-core" />
         <module name="shiro-jwt-sso" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="shiro-jwt-app" target="1.8" />
-      <module name="shiro-jwt-sso" target="1.8" />
-      <module name="simple-shiro-jwt-springboot" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="jwt3s-core" options="-parameters" />
       <module name="shiro-jwt-app" options="-parameters" />
       <module name="shiro-jwt-sso" options="-parameters" />
-      <module name="simple-shiro-jwt-springboot" options="-parameters" />
     </option>
   </component>
 </project>

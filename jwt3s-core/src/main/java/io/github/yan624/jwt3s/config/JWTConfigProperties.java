@@ -1,4 +1,4 @@
-package io.github.yan624.shirojwtapp.config;
+package io.github.yan624.jwt3s.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

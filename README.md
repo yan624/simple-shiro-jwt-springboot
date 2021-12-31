@@ -47,8 +47,8 @@
 access token 默认过期时间是 20s，refresh token 默认过期时间是 1 个月。
 
 在使用刷新令牌功能后，jwt 失效的逻辑与上述步骤 5 不同。你会发现即使刷新页面也不会让你重新登录，这可以通过按 F12 选择 Network 后观察到。
-在登录成功后，等待 20s 以上，然后刷新页面。你会发现多了一个“http://localhost:8080/refresh”的请求。该请求旨在刷新 access token。
-视觉上你确实没有看见 jwt 失效且页面被重定向，实际上 jwt 已失效，只不过前端帮你又申请了一个过期时间不同的 access token。
+在登录成功后，等待 20s 以上，然后刷新页面。你会发现多了一个 http://localhost:8080/refresh 的请求。该请求旨在刷新 access token。
+视觉上你确实没有看见 jwt 失效且页面被重定向；实际上 jwt 已失效，只不过前端帮你又申请了一个过期时间不同的 access token。
 
 ## 用户请求时序图
 

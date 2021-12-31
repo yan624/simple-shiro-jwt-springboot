@@ -1,8 +1,8 @@
-package io.github.yan624.shirojwtapp.shiro;
+package io.github.yan624.jwt3s.shiro;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
-import io.github.yan624.shirojwtapp.config.JWTConfigProperties;
-import io.github.yan624.shirojwtapp.util.JwtUtil;
+import io.github.yan624.jwt3s.config.JWTConfigProperties;
+import io.github.yan624.jwt3s.util.JwtUtil;
 import org.apache.shiro.authc.AbstractAuthenticator;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;

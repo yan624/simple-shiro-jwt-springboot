@@ -1,10 +1,11 @@
-package io.github.yan624.shirojwtapp.shiro;
+package io.github.yan624.jwt3s.shiro;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import io.github.yan624.shirojwtapp.config.JWTConfigProperties;
-import io.github.yan624.shirojwtapp.util.JwtUtil;
+import io.github.yan624.jwt3s.config.JWTConfigProperties;
+import io.github.yan624.jwt3s.util.JwtUtil;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.AuthenticatingRealm;
 
@@ -42,8 +43,12 @@ public class JWTRealm extends AuthenticatingRealm {
             teex.printStackTrace();
             // throw shiro's exception
             throw new ExpiredCredentialsException();
+        } catch (JWTDecodeException e) {
+            e.printStackTrace();
+            throw e;
         } catch (JWTVerificationException e) {
             e.printStackTrace();
+            throw e;
         }
         if (verifiedJWT != null) {
             final String sub = verifiedJWT.getSubject();
